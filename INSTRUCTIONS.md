@@ -79,7 +79,16 @@ support_data/
 
 ## 📦 Deliverables
 
-- Source code (GitHub repo or ZIP file)
+### Submission Process
+
+1. **Fork this repository** to your GitHub account
+2. Implement your solution in the forked repository
+3. **Grant access** to the repository for evaluation (we will provide the GitHub username)
+4. Submit the repository link
+
+### Required Components
+
+- Source code (in your forked GitHub repository)
 - **README.md** (max one page setup guide)
 - CLI demo (3–5 example queries) - if you want to build a frontend, feel free, but a CLI demo is sufficient
 
