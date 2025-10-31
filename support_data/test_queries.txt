@@ -1,0 +1,26 @@
+# Technical Queries
+Ich habe mein Passwort vergessen und komme nicht mehr in meinen Account.
+Die App stürzt ständig ab, wenn ich sie öffne. Können Sie helfen?
+Login funktioniert nicht mehr seit gestern. Fehlermeldung: "Invalid credentials"
+Warum lädt die Anwendung so langsam? Internet ist schnell genug.
+Wie aktiviere ich die Zwei-Faktor-Authentifizierung für mehr Sicherheit?
+
+# Billing Queries
+Wo finde ich meine letzte Rechnung? Brauche sie für die Buchhaltung.
+Wann wird mein Konto das nächste Mal belastet? Möchte genug Geld drauf haben.
+Können Sie meine Kreditkarte durch PayPal ersetzen als Zahlungsmethode?
+Mir wurden versehentlich 50€ zu viel berechnet letzten Monat.
+Ich bin Student - gibt es Vergünstigungen für mich?
+Wie kündige ich mein Abonnement? Brauche den Service nicht mehr.
+
+# General Queries
+Welche Unterschiede gibt es zwischen Basic und Pro Plan?
+Wie kann ich euren Kundensupport am besten erreichen?
+Ist euer Service auch in Österreich verfügbar?
+Gibt es eine Testphase bevor ich zahlen muss?
+Wie sicher sind meine hochgeladenen Dokumente bei euch?
+
+# Mixed/Complex Queries
+Mein Account wurde gesperrt und ich verstehe nicht warum. Letzte Zahlung war pünktlich.
+Kann ich von Enterprise auf Basic downgraden und was kostet das?
+Login geht nicht und ich brauche dringend Zugang - habe wichtigen Termin heute.

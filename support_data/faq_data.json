@@ -1,0 +1,88 @@
+{
+  "technical": [
+    {
+      "id": "tech_001",
+      "question": "Wie kann ich mein Passwort zurücksetzen?",
+      "answer": "Klicken Sie auf 'Passwort vergessen' auf der Login-Seite. Sie erhalten eine E-Mail mit einem Reset-Link. Falls Sie keine E-Mail erhalten, prüfen Sie Ihren Spam-Ordner."
+    },
+    {
+      "id": "tech_002",
+      "question": "Die App stürzt beim Start ab. Was kann ich tun?",
+      "answer": "1. Starten Sie Ihr Gerät neu 2. Aktualisieren Sie die App auf die neueste Version 3. Löschen Sie den App-Cache 4. Falls das Problem weiterhin besteht, deinstallieren und installieren Sie die App neu."
+    },
+    {
+      "id": "tech_003",
+      "question": "Ich kann mich nicht einloggen. Was ist das Problem?",
+      "answer": "Überprüfen Sie: 1. Korrekte E-Mail-Adresse 2. Caps Lock ist deaktiviert 3. Stabile Internetverbindung 4. Browser-Cache leeren. Bei weiteren Problemen nutzen Sie die Passwort-Reset Funktion."
+    },
+    {
+      "id": "tech_004",
+      "question": "Warum ist die App so langsam?",
+      "answer": "Mögliche Ursachen: 1. Schwache Internetverbindung 2. Veraltete App-Version 3. Zu wenig Speicherplatz 4. Viele Apps im Hintergrund. Starten Sie die App neu und prüfen Sie Ihre Internetgeschwindigkeit."
+    },
+    {
+      "id": "tech_005",
+      "question": "Unterstützen Sie Zwei-Faktor-Authentifizierung?",
+      "answer": "Ja, wir unterstützen 2FA. Aktivieren Sie es in den Kontoeinstellungen unter 'Sicherheit'. Sie können Google Authenticator, SMS oder E-Mail als zweiten Faktor verwenden."
+    }
+  ],
+  "billing": [
+    {
+      "id": "bill_001",
+      "question": "Wie kann ich meine Rechnung einsehen?",
+      "answer": "Loggen Sie sich in Ihr Konto ein und gehen Sie zu 'Abrechnung' > 'Rechnungshistorie'. Dort finden Sie alle Rechnungen der letzten 12 Monate als PDF zum Download."
+    },
+    {
+      "id": "bill_002",
+      "question": "Wann wird mein Konto belastet?",
+      "answer": "Bei monatlichen Abos am gleichen Tag jeden Monats, bei jährlichen Abos jährlich zum Kaufdatum. Sie erhalten 3 Tage vorher eine E-Mail-Erinnerung."
+    },
+    {
+      "id": "bill_003",
+      "question": "Kann ich meine Zahlungsmethode ändern?",
+      "answer": "Ja, gehen Sie zu Kontoeinstellungen > Zahlungsmethoden. Sie können Kreditkarten, PayPal oder SEPA-Lastschrift hinzufügen, bearbeiten oder entfernen."
+    },
+    {
+      "id": "bill_004",
+      "question": "Ich wurde falsch belastet. Was nun?",
+      "answer": "Kontaktieren Sie umgehend unser Billing-Team. Wir prüfen die Rechnung und erstatten unberechtigte Abbuchungen innerhalb von 5-7 Werktagen zurück."
+    },
+    {
+      "id": "bill_005",
+      "question": "Gibt es Rabatte für Studenten?",
+      "answer": "Ja, Studenten erhalten 50% Rabatt auf alle Pläne. Senden Sie uns eine Kopie Ihres Studentenausweises an student@support.com für die Verifizierung."
+    },
+    {
+      "id": "bill_006",
+      "question": "Wie kann ich mein Abo kündigen?",
+      "answer": "Gehen Sie zu Kontoeinstellungen > Abonnement > 'Kündigen'. Ihr Abo läuft bis zum Ende des bezahlten Zeitraums weiter. Eine Bestätigungs-E-Mail wird gesendet."
+    }
+  ],
+  "general": [
+    {
+      "id": "gen_001",
+      "question": "Welche Pläne bieten Sie an?",
+      "answer": "Wir haben 3 Pläne: Basic (9€/Monat), Pro (19€/Monat) und Enterprise (49€/Monat). Alle Pläne sind auch jährlich mit 20% Rabatt verfügbar."
+    },
+    {
+      "id": "gen_002",
+      "question": "Wie erreiche ich den Kundensupport?",
+      "answer": "Support ist 24/7 verfügbar: E-Mail an support@company.com, Live-Chat in der App, oder Telefon +49 800 123 4567 (Mo-Fr 9-18 Uhr)."
+    },
+    {
+      "id": "gen_003",
+      "question": "In welchen Ländern ist der Service verfügbar?",
+      "answer": "Wir sind in allen EU-Ländern, USA, Kanada, Australien und der Schweiz verfügbar. Eine vollständige Liste finden Sie auf unserer Website unter 'Verfügbarkeit'."
+    },
+    {
+      "id": "gen_004",
+      "question": "Bieten Sie eine kostenlose Testversion an?",
+      "answer": "Ja, alle Neukunden erhalten 14 Tage kostenlosen Zugang zu allen Pro-Features. Keine Kreditkarte erforderlich. Nach Ablauf können Sie einen passenden Plan wählen."
+    },
+    {
+      "id": "gen_005",
+      "question": "Wie sicher sind meine Daten?",
+      "answer": "Wir verwenden AES-256 Verschlüsselung, sind GDPR-konform und ISO 27001 zertifiziert. Ihre Daten werden ausschließlich in deutschen Rechenzentren gespeichert."
+    }
+  ]
+}
