@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+*.lock
+bun.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.env
+.env.local
+
