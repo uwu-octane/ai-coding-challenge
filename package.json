@@ -1,0 +1,13 @@
+{
+  "name": "ai-coding-challenge",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts"
+  },
+  "dependencies": {
+    "hono": "^4.10.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "better-sqlite3": "^12.4.1"
+  }
+}
