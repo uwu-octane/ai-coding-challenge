@@ -20,6 +20,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .env*
+!.env.example
 
 data.sqlite
 data.sqlite-shm

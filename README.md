@@ -1,13 +1,13 @@
-To install dependencies:
+## Getting Started
 
-```sh
-bun install
+Install dependencies with `bun install`, then copy `.env.example` to `.env` and configure your environment variables (at minimum, set `LLM_API_KEY`). Start the server with `bun run dev`. The service will be available at http://localhost:7788.
+
+## Testing the API
+
+Test the chat endpoint with:
+
+```bash
+curl -N -H "Content-Type: application/json" \
+  -X POST http://localhost:7788/api/ai/chat \
+  -d '{"message": "Hi, make a short introduction"}'
 ```
-
-To run:
-
-```sh
-bun run dev
-```
-
-open http://localhost:7788
