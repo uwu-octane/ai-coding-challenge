@@ -1,19 +1,54 @@
 import { db, now } from "./sqlite";
 import { Faqs, Users, Orders, Tickets } from "./schema";
+import { existsSync, readFileSync } from "fs";
+import { embed } from "../server/embedding/embedding";
+import { f32ToBuffer, toContent, type FaqJson } from "./vec";
+
+export async function seedFaq(path: string) {
+  if (!existsSync(path)) {
+    throw new Error(`File ${path} does not exist`);
+  }
+  const raw = readFileSync(path, "utf-8");
+  const data = JSON.parse(raw) as FaqJson;
+  let inserted = 0;
+  const cols = db
+    .all<{ name: string }>(`PRAGMA table_info(faqs)`)
+    .map((r) => r.name);
+  if (!cols.includes("embedding")) {
+    db.run(`ALTER TABLE faqs ADD COLUMN embedding BLOB`);
+  }
+  await db.transaction(async (tx) => {
+    tx.run(`DELETE FROM faqs`);
+
+    for (const category of Object.keys(data) as (keyof FaqJson)[]) {
+      const entries = data[category];
+      for (const entry of entries) {
+        const content = toContent(entry.question, entry.answer);
+
+        const [vector] = await embed([content]);
+
+        await tx.insert(Faqs).values({
+          question: entry.question,
+          answer: entry.answer,
+          tags: category,
+          embedding: f32ToBuffer(vector),
+        });
+        console.log(`Inserted FAQ: ${entry.question}`);
+        inserted++;
+      }
+    }
+  });
+
+  return inserted;
+}
 
 export async function seed() {
+  //const count = await seedFaq("support_data/faq_data.json");
   const faqCount = db.select().from(Faqs).all().length;
   if (faqCount > 0) {
     return;
   }
-  db.insert(Faqs).values([
-    {
-      question: "Wie kann ich mein Passwort zurücksetzen?",
-      answer:
-        "Klicken Sie auf 'Passwort vergessen' auf der Login-Seite. Sie erhalten eine E-Mail mit einem Reset-Link. Falls Sie keine E-Mail erhalten, prüfen Sie Ihren Spam-Ordner.",
-      tags: "account,security, technical",
-    },
-  ]);
+
   db.insert(Users).values([
     {
       name: "Alice",

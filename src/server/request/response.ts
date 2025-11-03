@@ -16,7 +16,7 @@ export function ok<T>(c: Context, data?: T, message = "ok") {
 
 export function err(
   c: Context,
-  code = 1,
+  code = 500,
   message = "error",
   data?: any,
   httpStatus: ContentfulStatusCode = 200

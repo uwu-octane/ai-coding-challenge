@@ -11,3 +11,10 @@ curl -N -H "Content-Type: application/json" \
   -X POST http://localhost:7788/api/ai/chat \
   -d '{"message": "Hi, make a short introduction"}'
 ```
+
+## TODO
+
+1. OpenAPI DOC
+2. RAG (Knowledge Agent impl)
+3. RAG (Action Agent impl)
+4. RAG (Router: Intention classification; query rewriter;)

@@ -14,10 +14,13 @@
     "@hono/zod-validator": "^0.7.4",
     "@langchain/core": "^1.0.2",
     "@langchain/langgraph": "^1.0.1",
+    "@toon-format/toon": "^0.7.0",
     "ai": "^5.0.86",
     "drizzle-kit": "^0.31.6",
     "drizzle-orm": "^0.44.7",
     "hono": "^4.10.4",
+    "mongodb": "^6.20.0",
+    "openai": "^6.7.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {

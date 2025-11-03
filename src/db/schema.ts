@@ -1,4 +1,10 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import {
+  sqliteTable,
+  text,
+  integer,
+  real,
+  blob,
+} from "drizzle-orm/sqlite-core";
 export const Sessions = sqliteTable("sessions", {
   id: text("id").primaryKey(),
   created_at: integer("created_at").notNull(),
@@ -28,6 +34,7 @@ export const Faqs = sqliteTable("faqs", {
   question: text("question").notNull(),
   answer: text("answer").notNull(),
   tags: text("tags"),
+  embedding: blob("embedding"),
 });
 
 export const Users = sqliteTable("users", {
