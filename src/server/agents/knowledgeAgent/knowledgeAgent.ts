@@ -1,48 +1,120 @@
-import type {
-  KnowledgeAgentInput,
-  KnowledgeAgentOutput,
-} from "../shared/types";
+import type { ModelMessage, ToolModelMessage } from "ai";
+import { generateText, tool } from "ai";
+import { model } from "@/server/llm/llm";
+import { retrieval } from "./retrieval";
+import path from "path";
+import fs from "fs/promises";
+import YAML from "yaml";
 import {
-  retrieval,
-  bm25Search,
-  hybridRetrieval,
-  rerankMock,
-  resultProcess,
-} from "./retrieval";
+  KnowledgeAgentInputSchema,
+  type KnowledgeAgentOutput,
+  KnowledgeAgentOutputSchema,
+} from "../shared/knowledge";
 
-export async function knowledgeAgent(
-  input: KnowledgeAgentInput
-): Promise<KnowledgeAgentOutput> {
-  const { query, top_k, mode } = input;
+type YamlRoot = {
+  knowledge_agent?: {
+    system?: string;
+    few_shot?: string;
+    guards?: string;
+  };
+};
 
-  if (!query.trim()) {
-    return { mode, count: 0, results: [] };
+let cached: YamlRoot | null = null;
+
+export async function loadPrompts(
+  filePath = path.resolve(__dirname, "prompt.yaml")
+): Promise<YamlRoot> {
+  if (cached) return cached;
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    cached = YAML.parse(raw) as YamlRoot;
+    return cached;
+  } catch (err: unknown) {
+    console.error("Error loading knowledge agent prompts:", err);
+    throw err;
   }
+}
 
-  let results: KnowledgeAgentOutput["results"] = [];
+export async function getKnowledgeAgentSystem(): Promise<string> {
+  const p = await loadPrompts();
+  const k = p.knowledge_agent ?? {};
+  const parts = [k.system ?? "", k.few_shot ?? "", k.guards ?? ""].filter(
+    Boolean
+  );
+  return parts.join("\n\n");
+}
 
-  switch (mode) {
-    case "vector":
-      results = await retrieval(query, top_k);
-      break;
-    case "bm25":
-      bm25Search();
-      break;
-    case "hybrid":
-      hybridRetrieval();
-      bm25Search();
-      results = await retrieval(query, top_k);
-      resultProcess();
-      break;
-    default:
-      console.warn(`Unknown retrieval mode: ${mode}`);
-  }
+// Define the vector search tool using Vercel AI SDK
+const vectorSearchTool = tool({
+  description: "Performs vector search in FAQ knowledge database",
+  inputSchema: KnowledgeAgentInputSchema,
+  execute: async ({ query, top_k, scoreThreshold }) => {
+    const results = await retrieval(query, top_k, scoreThreshold);
+    return {
+      mode: "vector" as const,
+      count: results.length,
+      results: results,
+    };
+  },
+});
 
-  rerankMock();
+export async function knowledgeAgent(messages: ModelMessage[]) {
+  const system = await getKnowledgeAgentSystem();
 
+  const result = await generateText({
+    model,
+    tools: {
+      knowledge_vector_search: vectorSearchTool,
+    },
+    toolChoice: "required",
+    system: system,
+    messages: messages,
+    temperature: 0,
+  });
+
+  const step = result.steps[result.steps.length - 1];
+  const call = step?.toolCalls?.[0];
+  const res = step?.toolResults?.[0];
+
+  const toolName = call?.toolName ?? "knowledge_vector_search";
+
+  const output: KnowledgeAgentOutput = KnowledgeAgentOutputSchema.parse(
+    res?.output ?? {
+      mode: "vector",
+      count: 0,
+      results: [],
+    }
+  );
+
+  const assistantMsg: ModelMessage = {
+    role: "assistant",
+    content: [
+      {
+        type: "tool-call",
+        toolCallId: call?.toolCallId ?? "",
+        toolName: toolName,
+        input: (call as any).input ?? {},
+      },
+    ],
+  } as ModelMessage;
+
+  const KnowledgeToolResultMsg: ToolModelMessage = {
+    role: "tool",
+    content: [
+      {
+        type: "tool-result",
+        toolCallId: call?.toolCallId ?? "",
+        toolName: toolName,
+        output: {
+          type: "json",
+          value: output,
+        },
+      },
+    ],
+  };
+  // console.log("knowledgeAgent output:", KnowledgeToolResultMsg);
   return {
-    mode,
-    count: results.length,
-    results,
+    knowledgeRefs: output.results ?? [],
+    messages: [assistantMsg, KnowledgeToolResultMsg],
   };
 }

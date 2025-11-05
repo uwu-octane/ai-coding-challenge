@@ -4,7 +4,8 @@ import { getAllFaqs, cosineSim, toF32 } from "../../../db/vec";
 
 export async function retrieval(
   query: string,
-  k: number = 5
+  k: number = 5,
+  scoreThreshold: number = 0.6
 ): Promise<RetrievedFaq[]> {
   if (!query || !query.trim()) return [];
   console.log("doing vector retrieval");
@@ -40,13 +41,25 @@ export async function retrieval(
   }
 
   if (!scored.length) return [];
-  console.log("sorting results");
+
+  // Filter by score threshold
+  const filtered = scored.filter((item) => item.score >= scoreThreshold);
+
+  if (!filtered.length) {
+    console.log(`No results above threshold ${scoreThreshold}`);
+    return [];
+  }
+
+  console.log(
+    `Found ${filtered.length} results above threshold ${scoreThreshold}`
+  );
+
   // top k
   const limit = Number.isFinite(k)
     ? Math.max(1, Math.min(50, Math.floor(k)))
     : 5;
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, limit);
+  filtered.sort((a, b) => b.score - a.score);
+  return filtered.slice(0, limit);
 }
 
 export function rerankMock() {
