@@ -12,9 +12,9 @@ curl -N -H "Content-Type: application/json" \
   -d '{"message": "Hi, make a short introduction"}'
 ```
 
-## TODO
+## Test Call
 
-1. OpenAPI DOC
-2. RAG (Knowledge Agent impl)
-3. RAG (Action Agent impl)
-4. RAG (Router: Intention classification; query rewriter;)
+curl -N -H "Content-Type: application/json" -X POST http://localhost:7788/api/ai/chatRag -d '{"sessionId": "f0eb4add-a2ef-48c4-9677-cd784bb4cc4f", "message": "kannst du ein Ticket anlegen, Mein Account wurde gesperrt"}'
+Ich habe ein Ticket für Sie erstellt. Die Ticket-ID lautet: **a8ec01b9-159e-41cd-8386-1251ae1441ce**
+
+Unser Support-Team wird sich so schnell wie möglich um Ihr gesperrtes Konto kümmern und Ihnen eine Rückmeldung geben.%
