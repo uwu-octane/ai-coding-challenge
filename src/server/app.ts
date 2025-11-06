@@ -19,6 +19,7 @@ app.onError((e, c) => {
   return err(c, code, `${message} (reqId=${requestId})`);
 });
 
+// Ensure tables exist before seeding
 await seed();
 
 const PORT = Number(process.env.APP_PORT || 7788);

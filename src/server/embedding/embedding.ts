@@ -2,24 +2,27 @@ import { OpenAI } from "openai";
 
 const apiKey = process.env.EMBEDDING_MODEL_API_KEY;
 const apiUrl = process.env.EMBEDDING_BASE_URL;
-const model = process.env.EMBEDDING_MODEL;
+const embeddingModel = process.env.EMBEDDING_MODEL;
 const dimEnv = process.env.EMBED_DIMENSIONS;
 const dimensions = dimEnv ? Number(dimEnv) : undefined;
 
-if (!apiKey || !apiUrl || !model) {
-  throw new Error(
-    "EMBEDDING_MODEL_API_KEY or EMBEDDING_BASE_URL or EMBEDDING_MODEL is not set"
-  );
+if (!apiKey || !embeddingModel) {
+  throw new Error("EMBEDDING_MODEL_API_KEY or EMBEDDING_MODEL is not set");
 }
 
-const embeddingClient = new OpenAI({
-  apiKey,
-  baseURL: apiUrl,
-});
+let embeddingClient: OpenAI;
+if (embeddingModel === "text-embedding-3-small") {
+  embeddingClient = new OpenAI({ apiKey: apiKey });
+} else {
+  if (!apiUrl) {
+    throw new Error("EMBEDDING_BASE_URL is not set");
+  }
+  embeddingClient = new OpenAI({ apiKey: apiKey, baseURL: apiUrl });
+}
 
 export async function embed(texts: string[]): Promise<Float32Array[]> {
   const res = await embeddingClient.embeddings.create({
-    model: model!,
+    model: embeddingModel!,
     input: texts,
     ...(dimensions ? { dimensions: dimensions } : {}),
   });

@@ -14,15 +14,10 @@
         "drizzle-kit": "^0.31.6",
         "drizzle-orm": "^0.44.7",
         "hono": "^4.10.4",
-<<<<<<< HEAD
-        "mongodb": "^6.20.0",
-        "openai": "^6.7.0",
-=======
         "langchain": "^1.0.2",
         "mongodb": "^6.20.0",
         "openai": "^6.7.0",
         "yaml": "^2.8.1",
->>>>>>> feat/rag
         "zod": "^4.1.12",
       },
       "devDependencies": {
@@ -30,7 +25,6 @@
         "@types/bun": "latest",
         "@typescript-eslint/eslint-plugin": "^8.46.2",
         "@typescript-eslint/parser": "^8.46.2",
-        "better-sqlite3": "^12.4.1",
         "eslint": "^9.39.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",

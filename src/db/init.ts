@@ -1,4 +1,5 @@
 import { db, now } from "./sqlite";
+import { ensureTables } from "./sqlite";
 import { Faqs, Users, Orders, Tickets } from "./schema";
 import { existsSync, readFileSync } from "fs";
 import { embed } from "../server/embedding/embedding";
@@ -43,6 +44,9 @@ export async function seedFaq(path: string) {
 }
 
 export async function seed() {
+  // Ensure tables (defensive)
+  ensureTables();
+
   //const count = await seedFaq("support_data/faq_data.json");
   const faqCount = db.select().from(Faqs).all().length;
   if (faqCount > 0) {

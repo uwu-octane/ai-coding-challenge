@@ -1,0 +1,37 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-server
+    env_file:
+      - .env
+    environment:
+      - APP_PORT=7788
+      - DB_FILE=/app/data/data.sqlite
+      # Provide LLM settings via .env or environment
+      # - LLM_API_KEY=your_key
+      # - LLM_MODEL=deepseek-chat
+      # - LLM_BASE_URL=https://api.deepseek.com
+    volumes:
+      - server_data:/app/data
+    working_dir: /app
+    command: ["bun", "run", "src/index.ts"]
+    ports:
+      - "7788:7788"
+
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    container_name: ai-ui
+    environment:
+      - VITE_API_TARGET=http://server:7788
+      - VITE_PORT=7787
+    ports:
+      - "7787:7787"
+    depends_on:
+      - server
+
+volumes:
+  server_data: {}

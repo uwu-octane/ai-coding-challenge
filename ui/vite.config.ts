@@ -14,11 +14,12 @@ export default defineConfig({
     },
   },
   server: {
-    port: 7787,
+    port: parseInt(process.env.VITE_PORT || "7787", 10),
+    host: "0.0.0.0",
     strictPort: false,
     proxy: {
       "/api": {
-        target: "http://localhost:7788",
+        target: process.env.VITE_API_TARGET || "http://localhost:7788",
         changeOrigin: true,
       },
     },

@@ -23,9 +23,6 @@ type ApiResponse<T> = {
   message?: string;
 };
 
-// 使用相对路径，通过 Vite 代理转发到后端
-// 开发环境：Vite 代理 /api -> http://localhost:7788
-// 生产环境：需要配置反向代理或使用环境变量
 const API_BASE = import.meta.env.VITE_API_BASE || "";
 
 async function jsonFetch<T>(url: string, init?: RequestInit): Promise<T> {
