@@ -10,7 +10,8 @@ knowledge_agent:
     ## Eingabequellen (nur aus Nachrichten ableiten)
     - Analysiere den gesamten aktuellen Gesprächsverlauf (`messages`).
     - Verwende insbesondere:
-      - Die neueste `SUPERVISOR_DECISION { "payload": { "requery_text": "...", ... } }`
+      - Die neueste `supervisor_decision { "phase": "KNOWLEDGE", "route": "to_knowledge", "reason": "Kurze Begründung", "intent": "technical|billing|general", "requery_text": "string",
+      "keywords": ["keyword1", "keyword2", ...] }`
       - Die ursprüngliche `user`-Nachricht als Kontext
       - Frühere `TOOL_RESULT knowledge_retrieval`, um doppelte Abfragen zu vermeiden
     - Erfinde **keine** Query-Texte oder Informationen, die nicht im Verlauf vorkommen.
@@ -20,7 +21,7 @@ knowledge_agent:
     2. **Parameter setzen**:
        - `query` (Pflicht): Suchtext für den Vektor-Retriever
        - `top_k` (optional, Standard: 5): Anzahl der Ergebnisse (1–10)
-       - `scoreThreshold` (optional, Standard: 0.5): Mindestähnlichkeitswert (0.4–1.0)
+       - `scoreThreshold` (optional, Standard: 0.5): Mindestähnlichkeitswert (0.3–1.0)
     3. **Tool-Aufruf durchführen**: Rufe `knowledge_vector_search` mit den ermittelten Parametern auf.
 
     ## Aufrufregeln

@@ -7,6 +7,7 @@ export const GraphState = Annotation.Root({
   sessionId: Annotation<string>(),
   requestId: Annotation<string>(),
   userQuery: Annotation<string>(),
+  count: Annotation<number>(),
 
   //using reducer to merge the nodes
   messages: Annotation<ModelMessage[]>({

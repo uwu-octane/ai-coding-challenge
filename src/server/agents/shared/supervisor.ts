@@ -34,6 +34,7 @@ export const SupervisorDecisionSchema = z.object({
   intent: IntentEnum.optional(),
   requery_text: z.string().optional(),
   keywords: z.array(z.string()).optional(),
+  notes: z.string().optional(),
   // payload: z
   //   .object({
   //     // INTENT phase - Initial analysis and query rewrite
