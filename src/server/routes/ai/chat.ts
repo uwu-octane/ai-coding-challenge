@@ -28,6 +28,7 @@ Before giving your answer, you should make a summary (dont send it to the user) 
 You are only allowed to use the information provided to you to answer the user's question or help with the task.
 You are not allowed to use any information that is not provided to you.
 You are not allowed to use invented information.
+DONT WRITE ANY TOOL CALLS OR TOOL RESULTS CONTENT IN YOUR ANSWER.
 `;
 
 router.post("/chat", validateJson(ChatRequestSchema), async (c) => {
@@ -61,7 +62,7 @@ router.post("/newChat", validateJson(NewChatRequestSchema), async (c) => {
   const _body = c.req.valid("json") as NewChatRequest;
 
   const sessionId = ensureSession(null);
-
+  console.log("new chat session id", sessionId);
   const res: NewChatResponse = { sessionId };
   c.header("X-Session-ID", sessionId);
   return ok(c, res);

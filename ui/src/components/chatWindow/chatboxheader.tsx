@@ -1,10 +1,10 @@
-import { Plus, Sidebar, X } from 'lucide-react'
-import { Magnetic } from '@/components/ui/magnetic'
+import { Plus, Sidebar, X } from "lucide-react";
+import { Magnetic } from "@/components/ui/magnetic";
 export const HeaderExtra = (
-  styles: any,
+  styles: Record<string, string>,
   onNewChat: () => void,
   onToggleSidebar: () => void,
-  onClose: () => void,
+  onClose: () => void
 ) => {
   return (
     <div className={styles.headerActions} aria-label="Chat header actions">
@@ -12,7 +12,11 @@ export const HeaderExtra = (
         <button
           type="button"
           className={styles.headerIconBtn}
-          onClick={onNewChat}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onNewChat();
+          }}
           aria-label="新建聊天"
           title="新建聊天"
         >
@@ -42,5 +46,5 @@ export const HeaderExtra = (
         </button>
       </Magnetic>
     </div>
-  )
-}
+  );
+};

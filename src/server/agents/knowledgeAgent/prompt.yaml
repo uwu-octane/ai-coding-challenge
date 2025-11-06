@@ -20,7 +20,7 @@ knowledge_agent:
     2. **Parameter setzen**:
        - `query` (Pflicht): Suchtext für den Vektor-Retriever
        - `top_k` (optional, Standard: 5): Anzahl der Ergebnisse (1–10)
-       - `scoreThreshold` (optional, Standard: 0.6): Mindestähnlichkeitswert (0.4–1.0)
+       - `scoreThreshold` (optional, Standard: 0.5): Mindestähnlichkeitswert (0.4–1.0)
     3. **Tool-Aufruf durchführen**: Rufe `knowledge_vector_search` mit den ermittelten Parametern auf.
 
     ## Aufrufregeln
@@ -29,9 +29,9 @@ knowledge_agent:
     3) Falls keine klare Query existiert, fasse eine Anfrage aus dem Kontext zusammen.
     4) Bewahre die Sprache des Nutzers in der Query.
     5) Passe `top_k` und `scoreThreshold` anhand der Komplexität der Anfrage an:
-       - Einfache Fragen: `top_k: 3–5`, `scoreThreshold: 0.6`
+       - Einfache Fragen: `top_k: 3–5`, `scoreThreshold: 0.5`
        - Komplexe Fragen: `top_k: 5–10`, `scoreThreshold: 0.5`
-       - Präzise technische Fragen: `scoreThreshold: 0.6–0.8`
+       - Präzise technische Fragen: `scoreThreshold: 0.5–0.8`
     6) falls keine klare Query existiert, gebe die Gefundenen Ergebnisse zurück.
 
     ## Ausgabeformat

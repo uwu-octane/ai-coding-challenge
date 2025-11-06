@@ -1,186 +1,86 @@
-import React, { useState } from 'react'
-import { Square, ArrowUp } from 'lucide-react'
-import { Magnetic } from '@/components/ui/magnetic'
 import {
-  SimpleMorphingPopover,
-  SimpleMorphingPopoverTrigger,
-  SimpleMorphingPopoverContent,
-  useSimpleMorphingPopover,
-} from '@/components/ui/simple-morphing-popover'
-import {
-  PromptInput,
-  PromptInputAction,
-  PromptInputActions,
-  PromptInputTextarea,
-} from '@/components/ui/prompt-input'
-import { ChatButton } from './chatbutton'
-import { Button } from '@/components/ui/buttonv1'
-import { ActionDock } from './actiondocker'
-import { testActions } from './testactions'
-import { ChatContainer } from './chatbox'
-import type { ChatMessage } from './chatbox'
+  MorphingPopover,
+  MorphingPopoverTrigger,
+  MorphingPopoverContent,
+} from "@/components/ui/morphing-popover";
+import { motion } from "motion/react";
+import { useId, useState } from "react";
+import { ArrowLeftIcon } from "lucide-react";
 
-export function ChatPopoverLauncher() {
-  const [input, setInput] = useState('')
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+export function MorphingPopoverTextarea() {
+  const uniqueId = useId();
+  const [note, setNote] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = () => {
-    if (!input.trim()) return
-    setIsLoading(true)
-    setTimeout(() => setIsLoading(false), 1500)
-  }
-
-  const handleNewChat = () => {
-    setMessages([])
-    setInput('')
-  }
-
-  const triggerVariants = {
-    initial: {
-      opacity: 0,
-      scale: 0.8,
-      y: 8,
-      filter: 'blur(6px)',
-      transformOrigin: 'bottom right',
-    },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      filter: 'blur(0px)',
-      transformOrigin: 'bottom right',
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.95,
-      y: 4,
-      filter: 'blur(4px)',
-      transformOrigin: 'bottom right',
-    },
-  } as const
+  const closeMenu = () => {
+    setNote("");
+    setIsOpen(false);
+  };
 
   return (
-    <div className="pointer-events-none fixed right-6 bottom-[calc(1.5rem+env(safe-area-inset-bottom,0px))] z-[60]">
-      <SimpleMorphingPopover
-        className="relative flex items-end justify-end pointer-events-auto"
-        variants={triggerVariants}
-        transition={{ type: 'spring', bounce: 0.1, duration: 0.3 }}
-      >
-        <SimpleMorphingPopoverTrigger asChild>
-          <LauncherButton />
-        </SimpleMorphingPopoverTrigger>
-
-        <SimpleMorphingPopoverContent
-          className="pointer-events-auto absolute right-0 bottom-0 z-[80]
-                     w-[min(100vw,400px)] origin-bottom-right
-                     bg-transparent border-none shadow-none p-0"
-        >
-          <PopoverBody
-            messages={messages}
-            onNewChat={handleNewChat}
-            input={input}
-            onInputChange={setInput}
-            isLoading={isLoading}
-            onSubmit={handleSubmit}
-          />
-        </SimpleMorphingPopoverContent>
-      </SimpleMorphingPopover>
-    </div>
-  )
-}
-
-type PopoverBodyProps = {
-  messages: ChatMessage[]
-  onNewChat: () => void
-  input: string
-  onInputChange: (value: string) => void
-  isLoading: boolean
-  onSubmit: () => void
-}
-
-function PopoverBody({
-  messages,
-  onNewChat,
-  input,
-  onInputChange,
-  isLoading,
-  onSubmit,
-}: PopoverBodyProps) {
-  const { isOpen, close } = useSimpleMorphingPopover()
-  const contentRef = React.useRef<HTMLDivElement>(null)
-
-  React.useEffect(() => {
-    if (!isOpen) return
-    const frame = requestAnimationFrame(() => {
-      const textarea = contentRef.current?.querySelector('textarea')
-      textarea?.focus()
-    })
-    return () => cancelAnimationFrame(frame)
-  }, [isOpen])
-
-  return (
-    <div ref={contentRef} className="flex flex-col items-center gap-3 w-full">
-      <ChatContainer
-        items={[]}
-        activeItemId=""
-        onSelect={() => {}}
-        onNew={() => {}}
-        messages={messages}
-        onNewChat={onNewChat}
-        onToggleSidebar={() => {}}
-        onClose={close}
-      >
-        <ActionDock actions={testActions} />
-        <div className="w-full">
-          <PromptInput
-            value={input}
-            onValueChange={onInputChange}
-            isLoading={isLoading}
-            onSubmit={onSubmit}
-            maxHeight={200}
-            className="w-full overflow-hidden flex flex-row items-center gap-2 rounded-2xl p-0 pr-1 bg-transparent"
+    <MorphingPopover
+      transition={{
+        type: "spring",
+        bounce: 0.05,
+        duration: 0.3,
+      }}
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <MorphingPopoverTrigger className="flex h-9 items-center rounded-lg border border-zinc-950/10 bg-white px-3 text-zinc-950 dark:border-zinc-50/10 dark:bg-zinc-700 dark:text-zinc-50">
+        <motion.span layoutId={`popover-label-${uniqueId}`} className="text-sm">
+          Add Note
+        </motion.span>
+      </MorphingPopoverTrigger>
+      <MorphingPopoverContent className="rounded-xl border border-zinc-950/10 bg-white p-0 shadow-[0_9px_9px_0px_rgba(0,0,0,0.01),_0_2px_5px_0px_rgba(0,0,0,0.06)] dark:bg-zinc-700">
+        <div className="h-[200px] w-[364px]">
+          <form
+            className="flex h-full flex-col"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
           >
-            <PromptInputTextarea
-              placeholder="Ask me anything..."
-              className="relative z-10 min-h-[20px] max-h-[200px] overflow-y-auto text-base leading-6 placeholder:text-zinc-400 scrollbar-hidden text-xs"
+            <motion.span
+              layoutId={`popover-label-${uniqueId}`}
+              aria-hidden="true"
+              style={{
+                opacity: note ? 0 : 1,
+              }}
+              className="absolute top-3 left-4 text-sm text-zinc-500 select-none dark:text-zinc-400"
+            >
+              Add Note
+            </motion.span>
+            <textarea
+              className="h-full w-full resize-none rounded-md bg-transparent px-4 py-3 text-sm outline-none focus:outline-none focus:ring-0"
+              autoFocus
+              onChange={(e) => setNote(e.target.value)}
             />
-            <PromptInputActions className="bottom-2 right-2 p-0 m-0">
-              <PromptInputAction tooltip={isLoading ? 'Stop generation' : 'Send message'}>
-                <Magnetic>
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="h-5 w-5 rounded-full"
-                    onClick={onSubmit}
-                  >
-                    {isLoading ? (
-                      <Square className="size-3 fill-current" />
-                    ) : (
-                      <ArrowUp className="size-3" />
-                    )}
-                  </Button>
-                </Magnetic>
-              </PromptInputAction>
-            </PromptInputActions>
-          </PromptInput>
+            <div key="close" className="flex justify-between py-3 pr-4 pl-2">
+              <button
+                type="button"
+                className="flex items-center rounded-lg bg-white px-2 py-1 text-sm text-zinc-950 hover:bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-50 dark:hover:bg-zinc-600"
+                onClick={closeMenu}
+                aria-label="Close popover"
+              >
+                <ArrowLeftIcon
+                  size={16}
+                  className="text-zinc-900 dark:text-zinc-100"
+                />
+              </button>
+              <button
+                className="relative ml-1 flex h-8 shrink-0 scale-100 appearance-none items-center justify-center rounded-lg border border-zinc-950/10 bg-transparent px-2 text-sm text-zinc-500 transition-colors select-none hover:bg-zinc-100 hover:text-zinc-800 focus-visible:ring-2 active:scale-[0.98] dark:border-zinc-50/10 dark:text-zinc-50 dark:hover:bg-zinc-800"
+                type="submit"
+                aria-label="Submit note"
+                onClick={() => {
+                  closeMenu();
+                }}
+              >
+                Submit
+              </button>
+            </div>
+          </form>
         </div>
-      </ChatContainer>
-    </div>
-  )
-}
-
-function LauncherButton(props: React.ComponentProps<typeof ChatButton>) {
-  const { isOpen } = useSimpleMorphingPopover()
-  const { className, ...rest } = props
-  return (
-    <ChatButton
-      aria-label="Chat with AI"
-      className={
-        (isOpen ? 'opacity-0 pointer-events-none [inert] aria-hidden' : 'pointer-events-auto') +
-        (className ? ` ${className}` : '')
-      }
-      {...rest}
-    />
-  )
+      </MorphingPopoverContent>
+    </MorphingPopover>
+  );
 }

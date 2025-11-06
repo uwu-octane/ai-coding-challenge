@@ -1,7 +1,7 @@
 import { Annotation } from "@langchain/langgraph";
-import { AgentTraceEvent } from "../shared/graph";
 import { KnowledgeAgentOutput } from "../shared/knowledge";
 import type { ModelMessage } from "ai";
+import crypto from "crypto";
 
 export const GraphState = Annotation.Root({
   sessionId: Annotation<string>(),
@@ -40,9 +40,25 @@ export function mergeMessages(
   return merged.length > MAX ? merged.slice(-MAX) : merged;
 }
 
+type TraceEntry = {
+  node: string;
+  note: string;
+  at?: number;
+  id?: string;
+  origin?: string;
+};
+
 export function pushTrace(
-  state: typeof GraphState.State,
-  evt: Omit<AgentTraceEvent, "at">
-): AgentTraceEvent[] {
-  return [...(state.trace ?? []), { ...evt, at: Date.now() }];
+  _state: any,
+  entry: Omit<TraceEntry, "at" | "id">
+): TraceEntry[] {
+  const at = Date.now();
+  const id = crypto
+    .createHash("sha1")
+    .update(`${entry.node}|${entry.note}|${at}`)
+    .digest("hex")
+    .slice(0, 12);
+
+  // return the incremental array
+  return [{ ...entry, at, id }];
 }

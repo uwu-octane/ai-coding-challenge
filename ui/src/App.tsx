@@ -1,4 +1,4 @@
-import { ChatPopoverLauncher } from "@/components/chatWindow/chatluncher";
+import { ChatPopoverLauncher } from "@/components/chatWindow/chatluncherS";
 import "./App.css";
 
 function App() {

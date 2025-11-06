@@ -1,38 +1,38 @@
-'use client'
-
 import {
   useState,
   useId,
-  createContext,
   useContext,
   isValidElement,
   useRef,
   useEffect,
-} from 'react'
-import type { MouseEvent as ReactMouseEvent } from 'react'
-import { AnimatePresence, MotionConfig, motion, type Transition, type Variants } from 'motion/react'
-import { cn } from '@/lib/utils'
+} from "react";
+import type { MouseEvent as ReactMouseEvent } from "react";
+import {
+  AnimatePresence,
+  MotionConfig,
+  motion,
+  type Transition,
+  type Variants,
+} from "motion/react";
+import { cn } from "@/lib/utils";
 
 // 统一过渡
-const TRANSITION: Transition = { type: 'spring', bounce: 0.1, duration: 0.4 }
+const TRANSITION: Transition = {
+  type: "spring",
+  bounce: 0.03,
+  duration: 0.3,
+  ease: "easeInOut",
+};
 
-type MorphingPopoverContextValue = {
-  isOpen: boolean
-  open: () => void
-  close: () => void
-  uniqueId: string
-  variants?: Variants
-}
-
-const MorphingPopoverContext = createContext<MorphingPopoverContextValue | null>(null)
+import { MorphingPopoverContext } from "./simple-morphing-popover-context";
 
 /** 仅管理 open/close 两个动作 */
 function usePopoverLogic() {
-  const uniqueId = useId()
-  const [isOpen, setIsOpen] = useState(false)
-  const open = () => setIsOpen(true)
-  const close = () => setIsOpen(false)
-  return { isOpen, open, close, uniqueId }
+  const uniqueId = useId();
+  const [isOpen, setIsOpen] = useState(false);
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
+  return { isOpen, open, close, uniqueId };
 }
 
 /** 根组件：包一层 context 与动画配置 */
@@ -43,21 +43,24 @@ export function SimpleMorphingPopover({
   className,
   ...props
 }: {
-  children: React.ReactNode
-  transition?: Transition
-  variants?: Variants
-  className?: string
-} & React.ComponentProps<'div'>) {
-  const logic = usePopoverLogic()
+  children: React.ReactNode;
+  transition?: Transition;
+  variants?: Variants;
+  className?: string;
+} & React.ComponentProps<"div">) {
+  const logic = usePopoverLogic();
   return (
     <MorphingPopoverContext.Provider value={{ ...logic, variants }}>
       <MotionConfig transition={transition}>
-        <div className={cn('relative flex items-center justify-center', className)} {...props}>
+        <div
+          className={cn("relative flex items-center justify-center", className)}
+          {...props}
+        >
           {children}
         </div>
       </MotionConfig>
     </MorphingPopoverContext.Provider>
-  )
+  );
 }
 
 /** 触发器：点击时打开 */
@@ -67,44 +70,58 @@ export function SimpleMorphingPopoverTrigger({
   className,
   ...props
 }: {
-  children: React.ReactNode
-  asChild?: boolean
-  className?: string
+  children: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
 } & React.ComponentProps<typeof motion.button>) {
-  const ctx = useContext(MorphingPopoverContext)
-  if (!ctx) throw new Error('MorphingPopoverTrigger must be used within MorphingPopover')
+  const ctx = useContext(MorphingPopoverContext);
+  if (!ctx)
+    throw new Error(
+      "MorphingPopoverTrigger must be used within MorphingPopover"
+    );
 
-  const { onClick, ...restProps } = props
+  const { onClick, ...restProps } = props;
 
   const composeClick =
-    (original?: (event: ReactMouseEvent<any>) => void) => (event: ReactMouseEvent<any>) => {
-      original?.(event)
-      if (event.defaultPrevented) return
-      ctx.open()
-    }
+    <T extends HTMLElement>(original?: (event: ReactMouseEvent<T>) => void) =>
+    (event: ReactMouseEvent<T>) => {
+      original?.(event);
+      if (event.defaultPrevented) return;
+      ctx.open();
+    };
 
   if (asChild && isValidElement(children)) {
-    const MotionComp = motion.create(children.type as React.ForwardRefExoticComponent<any>)
-    const childProps = children.props as Record<string, unknown>
+    const MotionComp = motion.create(
+      children.type as React.ForwardRefExoticComponent<Record<string, unknown>>
+    );
+    const childProps = children.props as Record<string, unknown>;
     const childOnClick = childProps.onClick as
       | ((event: ReactMouseEvent<HTMLElement>) => void)
-      | undefined
+      | undefined;
 
     return (
       <MotionComp
         {...childProps}
         {...restProps}
-        onClick={composeClick((e) => {
-          ;(childOnClick as any)?.(e)
-          ;(onClick as any)?.(e)
+        onClick={composeClick<HTMLElement>((e) => {
+          (
+            childOnClick as
+              | ((event: ReactMouseEvent<HTMLElement>) => void)
+              | undefined
+          )?.(e);
+          (
+            onClick as
+              | ((event: ReactMouseEvent<HTMLElement>) => void)
+              | undefined
+          )?.(e);
         })}
         layoutId={`popover-trigger-${ctx.uniqueId}`}
-        className={cn((childProps.className as string) || '', className)}
+        className={cn((childProps.className as string) || "", className)}
         aria-expanded={ctx.isOpen}
         aria-controls={`popover-content-${ctx.uniqueId}`}
-        data-state={ctx.isOpen ? 'open' : 'closed'}
+        data-state={ctx.isOpen ? "open" : "closed"}
       />
-    )
+    );
   }
 
   return (
@@ -115,11 +132,11 @@ export function SimpleMorphingPopoverTrigger({
       className={className}
       aria-expanded={ctx.isOpen}
       aria-controls={`popover-content-${ctx.uniqueId}`}
-      data-state={ctx.isOpen ? 'open' : 'closed'}
+      data-state={ctx.isOpen ? "open" : "closed"}
     >
       {children}
     </motion.button>
-  )
+  );
 }
 
 /** 内容：仅受 isOpen 控制；调用 ctx.close() 即关闭 */
@@ -128,26 +145,34 @@ export function SimpleMorphingPopoverContent({
   className,
   ...props
 }: {
-  children: React.ReactNode
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 } & React.ComponentProps<typeof motion.div>) {
-  const ctx = useContext(MorphingPopoverContext)
-  if (!ctx) throw new Error('MorphingPopoverContent must be used within MorphingPopover')
-  const ref = useRef<HTMLDivElement>(null)
+  const ctx = useContext(MorphingPopoverContext);
+  if (!ctx)
+    throw new Error(
+      "MorphingPopoverContent must be used within MorphingPopover"
+    );
+  const ref = useRef<HTMLDivElement>(null);
 
-  // ESC 关闭
   useEffect(() => {
-    if (!ctx.isOpen) return
+    if (!ctx.isOpen) return;
 
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        ctx.close()
+      if (event.key === "Escape") {
+        ctx.close();
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [ctx.isOpen])
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [ctx]);
+
+  useEffect(() => {
+    if (ctx.isOpen && ref.current) {
+      ref.current.focus();
+    }
+  }, [ctx.isOpen]);
 
   return (
     <AnimatePresence>
@@ -156,12 +181,13 @@ export function SimpleMorphingPopoverContent({
           {...props}
           ref={ref}
           layoutId={`popover-content-${ctx.uniqueId}`}
+          //layoutId={`popover-trigger-${ctx.uniqueId}`}
           id={`popover-content-${ctx.uniqueId}`}
           role="dialog"
           aria-modal="true"
           className={cn(
-            'absolute rounded-md border border-zinc-950/10 bg-white p-2 shadow-md dark:border-zinc-50/10 dark:bg-zinc-700 dark:text-zinc-50',
-            className,
+            "absolute rounded-md border border-zinc-950/10 bg-white p-2 shadow-md dark:border-zinc-50/10 dark:bg-zinc-700 dark:text-zinc-50",
+            className
           )}
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -172,12 +198,5 @@ export function SimpleMorphingPopoverContent({
         </motion.div>
       )}
     </AnimatePresence>
-  )
-}
-
-/** 导出关闭函数钩子（可选） */
-export function useSimpleMorphingPopover() {
-  const ctx = useContext(MorphingPopoverContext)
-  if (!ctx) throw new Error('useSimpleMorphingPopover must be used within SimpleMorphingPopover')
-  return ctx
+  );
 }

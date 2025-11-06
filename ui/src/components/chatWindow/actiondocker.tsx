@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Magnetic } from "@/components/ui/magnetic";
-import { Dock, DockItem, DockIcon, DockLabel } from "@/components/ui/dock";
+import { Dock, DockItem, DockIcon } from "@/components/ui/dock";
 
 export type ActionItem = {
   id: string;
