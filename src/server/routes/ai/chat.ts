@@ -16,7 +16,6 @@ import {
 import { graph } from "@/server/llm/llm";
 import { buildHistoryMessages } from "@/conversation/history";
 import { chatStream, buildChatCompletion } from "@/server/llm/llm";
-import type { ModelMessage } from "ai";
 
 const router = new Hono();
 //test prompt
@@ -79,17 +78,23 @@ router.post("/chatRag", validateJson(ChatRequestSchema), async (c) => {
     text
   );
 
-  const initialState = {
-    sessionId: session_id,
-    requestId: round_request_id,
+  const cfg = { configurable: { thread_id: session_id } };
+
+  const stateNow = await graph.getState(cfg);
+  if (!stateNow?.values?.messages?.length) {
+    await graph.updateState(cfg, {
+      messages: [],
+      sessionId: session_id,
+      requestId: round_request_id,
+    });
+  }
+  await graph.updateState(cfg, {
+    messages: [{ role: "user", content: text }],
     userQuery: text,
-    messages: [{ role: "user", content: text }] as ModelMessage[],
-    toolCall: null,
-    toolResult: null,
-    knowledgeRefs: [],
-    trace: [],
-  };
-  const finalState = await graph.invoke(initialState);
+    requestId: round_request_id,
+  });
+
+  const finalState = await graph.invoke({}, cfg);
 
   const answerMessages = finalState.messages ?? [];
 

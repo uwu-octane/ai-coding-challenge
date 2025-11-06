@@ -4,6 +4,8 @@ import { knowledgeNode } from "../knowledgeAgent/knowledgeNode";
 import { actionNode } from "../actionAgent/actionNode";
 import { supervisorNode } from "../supervisor/supervisorNode";
 import { supervisorAnswerNode } from "../supervisor/supervisorNode";
+import { MemorySaver } from "@langchain/langgraph";
+const checkpoint = new MemorySaver();
 
 export function buildGraph() {
   const graph = new StateGraph(GraphState);
@@ -25,5 +27,5 @@ export function buildGraph() {
   // @ts-expect-error - LangGraph types are not fully compatible with TypeScript
   graph.addEdge(START, "supervisor");
 
-  return graph.compile();
+  return graph.compile({ checkpointer: checkpoint });
 }

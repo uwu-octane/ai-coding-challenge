@@ -30,7 +30,7 @@ export type Intent = z.infer<typeof IntentEnum>;
 export const SupervisorDecisionSchema = z.object({
   phase: PhaseEnum,
   route: RouteEnum,
-  reason: z.string().optional(),
+  reason: z.string(),
   intent: IntentEnum.optional(),
   requery_text: z.string().optional(),
   keywords: z.array(z.string()).optional(),
