@@ -2,7 +2,7 @@
 
 An intelligent customer service system based on LangGraph and Vercel AI SDK, supporting multi-agent collaboration and knowledge base retrieval.
 
-For detailed project design you can visist: https://deepwiki.com/uwu-octane/ai-coding-challenge/1-overview
+For detailed project design you can visist: [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/uwu-octane/ai-coding-challenge)
 
 ## Overview
 
