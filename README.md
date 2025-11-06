@@ -6,11 +6,13 @@ An intelligent customer service system based on LangGraph and Vercel AI SDK, sup
 
 This is an automated customer support system that uses **three specialized agents** working together to intelligently process and respond to customer requests:
 
-1. **Supervisor Agent (Router)**: Analyzes conversation state (messages, knowledge results, tool results) and makes event-driven routing decisions. Classifies user intent into categories (`technical`, `billing`, or `general`), performs query rewriting with coreference resolution, and routes requests to either the Knowledge Agent or Action Agent. Finally synthesizes comprehensive answers from all available information sources.
-2. **Knowledge Agent**: Performs vector-based semantic search in the FAQ knowledge base using embeddings. Uses the `knowledge_vector_search` tool to retrieve relevant FAQ entries based on the supervisor's rewritten query, with configurable search parameters (top_k, scoreThreshold) to optimize retrieval quality.
-3. **Action Agent**: Executes ticket-related (for mocking) operations through structured tool calls. Available tools include `ticket_create` (create new tickets), `ticket_read` (check ticket status), `ticket_update` (update ticket information), and `action_reflect` (request additional information when needed). Extracts relevant information from conversation history to populate tool parameters.
+1. The agents collaborate through a LangGraph-based workflow und use Vercel AI SDK for LLM invoke and chat.
 
-The agents collaborate through a LangGraph-based workflow und use Vercel AI SDK for LLM invoke and chat.
+**-** **Supervisor (Router)** — Classifies intent (**`technical`**, **`billing`**, **`general`**), rewrites queries (coreference), routes to **Knowledge** or **Action**, and synthesizes the final answer.
+
+**-** **Knowledge Agent** — Runs vector semantic search (**`knowledge_vector_search`**) against an FAQ store (SQLite, cosine similarity).
+
+**-** **Action Agent** — Calls structured tools: **`ticket_create`**, **`ticket_read`**, **`ticket_update`**, plus **`action_reflect`** when it needs more info.
 
 ## Tech Stack
 
@@ -18,6 +20,32 @@ The agents collaborate through a LangGraph-based workflow und use Vercel AI SDK 
 - **AI Framework**: LangGraph + AI SDK (supports OpenAI/DeepSeek)
 - **Database**: SQLite + Drizzle ORM
 - **Frontend**: React + Vite (located in `ui/` directory)
+
+## Technical Choices
+
+### SDK/Framework Selection
+
+- **Vercel AI SDK**: Unified API for LLM interactions across providers, with type-safe tool calling and streaming support
+- **LangGraph**: State-based workflow orchestration with event-driven routing, enabling supervisor pattern for agent coordination
+- **Hono + Bun**: Lightweight web framework with fast startup and native TypeScript support
+- **Drizzle ORM**: Type-safe database queries with minimal overhead
+- **SQLite**: Single database for all data including vector embeddings, simplifying deployment
+
+### Agent Coordination
+
+The system uses an **event-driven supervisor pattern**:
+
+- **Supervisor Node** analyzes conversation state and routes to specialized agents (`knowledge`, `action`, or `answer`)
+- Agents return to supervisor after execution for re-evaluation
+- Shared state (messages, knowledge refs, tool results) is merged via reducers
+- Dynamic routing allows iterative refinement: supervisor → knowledge → supervisor → action → supervisor → answer
+
+### Architectural Decisions
+
+1. **Vector-based retrieval**: Semantic search using embeddings stored in SQLite with cosine similarity
+2. **Tool-based execution**: Structured tool calls via Vercel AI SDK with Zod schemas for type safety
+3. **Prompt-driven behavior**: Agent logic separated into YAML prompt files for easy iteration
+4. **Multi-provider support**: Abstract LLM interface supports OpenAI, DeepSeek, and other providers via environment variables
 
 ## Environment Variables
 
