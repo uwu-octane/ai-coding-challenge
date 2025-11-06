@@ -21,7 +21,7 @@ export const now = (): number => {
 };
 
 // Initialize database schema - create tables if they don't exist
-export function ensureTables() {
+export async function ensureTables() {
   const statements = [
     "PRAGMA journal_mode = WAL",
     "PRAGMA foreign_keys = ON",
@@ -45,7 +45,8 @@ export function ensureTables() {
       question TEXT NOT NULL,
       answer TEXT NOT NULL,
       tags TEXT,
-      embedding BLOB
+      embedding BLOB,
+      embedded INTEGER NOT NULL DEFAULT 0
     )`,
     `CREATE TABLE IF NOT EXISTS users(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,6 +80,5 @@ export function ensureTables() {
   for (const sql of statements) {
     sqliteDb.run(sql);
   }
-
   console.log("Database tables ensured");
 }

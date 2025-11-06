@@ -5,7 +5,7 @@ import { getAllFaqs, cosineSim, toF32 } from "../../../db/vec";
 export async function retrieval(
   query: string,
   k: number = 5,
-  scoreThreshold: number = 0.6
+  scoreThreshold: number = 0.5
 ): Promise<RetrievedFaq[]> {
   if (!query || !query.trim()) return [];
   console.log("doing vector retrieval");

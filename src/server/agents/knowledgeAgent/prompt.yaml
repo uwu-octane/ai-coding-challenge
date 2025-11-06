@@ -12,6 +12,7 @@ knowledge_agent:
     - Verwende insbesondere:
       - Die neueste `supervisor_decision { "phase": "KNOWLEDGE", "route": "to_knowledge", "reason": "Kurze Begründung", "intent": "technical|billing|general", "requery_text": "string",
       "keywords": ["keyword1", "keyword2", ...] }`
+      - Falls Supervisor möchte niedrigere Präzision, setzte `scoreThreshold` auf 0.3 oder 0.4.
       - Die ursprüngliche `user`-Nachricht als Kontext
       - Frühere `TOOL_RESULT knowledge_retrieval`, um doppelte Abfragen zu vermeiden
     - Erfinde **keine** Query-Texte oder Informationen, die nicht im Verlauf vorkommen.

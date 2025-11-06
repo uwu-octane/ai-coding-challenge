@@ -35,6 +35,7 @@ export const Faqs = sqliteTable("faqs", {
   answer: text("answer").notNull(),
   tags: text("tags"),
   embedding: blob("embedding"),
+  embedded: integer("embedded").notNull().default(0),
 });
 
 export const Users = sqliteTable("users", {

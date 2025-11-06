@@ -1,6 +1,16 @@
-# AI Coding Challenge
+# Multi-Agent Customer Support System
 
-An intelligent customer service system based on LangGraph, supporting multi-agent collaboration and knowledge base retrieval.
+An intelligent customer service system based on LangGraph and Vercel AI SDK, supporting multi-agent collaboration and knowledge base retrieval.
+
+## Overview
+
+This is an automated customer support system that uses **three specialized agents** working together to intelligently process and respond to customer requests:
+
+1. **Supervisor Agent (Router)**: Analyzes conversation state (messages, knowledge results, tool results) and makes event-driven routing decisions. Classifies user intent into categories (`technical`, `billing`, or `general`), performs query rewriting with coreference resolution, and routes requests to either the Knowledge Agent or Action Agent. Finally synthesizes comprehensive answers from all available information sources.
+2. **Knowledge Agent**: Performs vector-based semantic search in the FAQ knowledge base using embeddings. Uses the `knowledge_vector_search` tool to retrieve relevant FAQ entries based on the supervisor's rewritten query, with configurable search parameters (top_k, scoreThreshold) to optimize retrieval quality.
+3. **Action Agent**: Executes ticket-related (for mocking) operations through structured tool calls. Available tools include `ticket_create` (create new tickets), `ticket_read` (check ticket status), `ticket_update` (update ticket information), and `action_reflect` (request additional information when needed). Extracts relevant information from conversation history to populate tool parameters.
+
+The agents collaborate through a LangGraph-based workflow und use Vercel AI SDK for LLM invoke and chat.
 
 ## Tech Stack
 
@@ -29,28 +39,38 @@ An intelligent customer service system based on LangGraph, supporting multi-agen
 
 ## Getting Started
 
-### Traditional Method
+### Quick Start (Using Makefile)
 
-1. Install dependencies
-
-```bash
-bun install
-```
-
-2. Configure environment variables
+1. Clone the repository
 
 ```bash
-cp .env.example .env  # if exists
-# Edit .env file and fill in required environment variables
+git clone https://github.com/uwu-octane/ai-coding-challenge.git
+cd ai-coding-challenge
 ```
 
-3. Start the service
+2. Install dependencies (automatically installs bun if needed)
 
 ```bash
-bun run dev
+make install
 ```
 
-The service will start at `http://localhost:7788`
+3. Configure environment variables
+
+```bash
+make setup-env
+# Or manually: cp env.example .env
+```
+
+4. Start the service
+
+```bash
+# Start both backend and UI
+make dev
+
+# Or start them separately:
+make dev-backend  # Backend only (http://localhost:7788)
+make dev-ui       # UI only (http://localhost:7787)
+```
 
 ### Docker Method
 

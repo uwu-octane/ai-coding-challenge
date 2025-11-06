@@ -23,12 +23,14 @@
     "langchain": "^1.0.2",
     "mongodb": "^6.20.0",
     "openai": "^6.7.0",
+    "prompts": "^2.4.2",
     "yaml": "^2.8.1",
     "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/bun": "latest",
+    "@types/prompts": "^2.4.9",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "eslint": "^9.39.0",

@@ -1,9 +1,10 @@
-import { db, now } from "./sqlite";
+import { db, now, sqliteDb } from "./sqlite";
 import { ensureTables } from "./sqlite";
 import { Faqs, Users, Orders, Tickets } from "./schema";
 import { existsSync, readFileSync } from "fs";
 import { embed } from "../server/embedding/embedding";
 import { f32ToBuffer, toContent, type FaqJson } from "./vec";
+import { eq } from "drizzle-orm";
 
 export async function seedFaq(path: string) {
   if (!existsSync(path)) {
@@ -12,30 +13,65 @@ export async function seedFaq(path: string) {
   const raw = readFileSync(path, "utf-8");
   const data = JSON.parse(raw) as FaqJson;
   let inserted = 0;
-  const cols = db
-    .all<{ name: string }>(`PRAGMA table_info(faqs)`)
-    .map((r) => r.name);
-  if (!cols.includes("embedding")) {
-    db.run(`ALTER TABLE faqs ADD COLUMN embedding BLOB`);
+
+  // Check if embedding column exists, add it if not
+  try {
+    const cols = sqliteDb.prepare(`PRAGMA table_info(faqs)`).all() as Array<{
+      name: string;
+    }>;
+    const columnNames = cols.map((r) => r.name);
+    if (!columnNames.includes("embedding")) {
+      sqliteDb.run(`ALTER TABLE faqs ADD COLUMN embedding BLOB`);
+    }
+  } catch (err) {
+    // Table might not exist yet, but ensureTables should have created it
+    // If it still doesn't exist, the error will be caught later
+    console.warn("Could not check for embedding column:", err);
   }
   await db.transaction(async (tx) => {
-    tx.run(`DELETE FROM faqs`);
-
     for (const category of Object.keys(data) as (keyof FaqJson)[]) {
       const entries = data[category];
       for (const entry of entries) {
-        const content = toContent(entry.question, entry.answer);
+        // Check if FAQ already exists
+        const existing = await tx
+          .select()
+          .from(Faqs)
+          .where(eq(Faqs.question, entry.question))
+          .limit(1);
 
-        const [vector] = await embed([content]);
+        // Only process if embedded = 0 or doesn't exist
+        if (existing.length === 0 || existing[0].embedded === 0) {
+          const content = toContent(entry.question, entry.answer);
+          const [vector] = await embed([content]);
 
-        await tx.insert(Faqs).values({
-          question: entry.question,
-          answer: entry.answer,
-          tags: category,
-          embedding: f32ToBuffer(vector),
-        });
-        console.log(`Inserted FAQ: ${entry.question}`);
-        inserted++;
+          if (existing.length === 0) {
+            // Insert new FAQ
+            await tx.insert(Faqs).values({
+              question: entry.question,
+              answer: entry.answer,
+              tags: category,
+              embedding: f32ToBuffer(vector),
+              embedded: 1,
+            });
+            console.log(`Inserted FAQ: ${entry.question}`);
+            inserted++;
+          } else {
+            // Update existing FAQ with embedding
+            await tx
+              .update(Faqs)
+              .set({
+                answer: entry.answer,
+                tags: category,
+                embedding: f32ToBuffer(vector),
+                embedded: 1,
+              })
+              .where(eq(Faqs.question, entry.question));
+            console.log(`Updated FAQ embedding: ${entry.question}`);
+            inserted++;
+          }
+        } else {
+          console.log(`Skipped FAQ (already embedded): ${entry.question}`);
+        }
       }
     }
   });
@@ -46,13 +82,7 @@ export async function seedFaq(path: string) {
 export async function seed() {
   // Ensure tables (defensive)
   ensureTables();
-
-  //const count = await seedFaq("support_data/faq_data.json");
-  const faqCount = db.select().from(Faqs).all().length;
-  if (faqCount > 0) {
-    return;
-  }
-
+  await seedFaq("support_data/faq_data.json");
   db.insert(Users).values([
     {
       name: "Alice",
