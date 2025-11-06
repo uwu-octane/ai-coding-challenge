@@ -1,0 +1,164 @@
+.chatCard {
+  border-radius: 1rem;
+  overflow: hidden;
+  width: 100%;
+  /* AntD Card header adjustments */
+  :global(.ant-card-head) {
+    min-height: 28px;
+    padding: 6px 12px;
+    border-bottom: none;
+  }
+  :global(.ant-card-head-title) {
+    border-bottom: none; /* keep border only on text element */
+    line-height: 1.25rem;
+    padding: 0; /* remove extra vertical padding to shrink header */
+  }
+  /* Normalize AntD Card body layout and spacing */
+  :global(.ant-card-body) {
+    display: flex;
+    flex-direction: column;
+    padding: 4px; /* equals previous inline padding: 4 */
+    height: var(--chatbox-body-height, 520px);
+  }
+}
+
+.chatTitle {
+  display: inline-block; /* make border match text width */
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding-bottom: 2px; /* space for underline */
+}
+
+.chatBody {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.6rem;
+  line-height: 1.5rem;
+  font-family: var(
+    --font-geist-sans,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    Apple Color Emoji,
+    Segoe UI Emoji
+  );
+}
+
+/* Scrollable conversation content area paddings and vertical spacing */
+.conversationContent {
+  padding: 0.75rem 1rem; /* py-3 px-4 */
+  overflow-y: auto;
+
+  /* space-y-4 */
+  > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/* Footer area normalization if needed */
+.chatFooter {
+  border: none;
+  padding: 0;
+}
+
+/* Optional fine-tuning for markdown content inside messages */
+.messageContent {
+  code {
+    font-family:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+      monospace;
+    font-size: 0.8125rem;
+  }
+  p {
+    margin: 0.25rem 0;
+  }
+}
+
+.headerActions {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.headerIconBtn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: #f7f7f7;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  &:active {
+    transform: translateY(0.5px) scale(0.98);
+  }
+}
+
+/* Same hover/active effects but without fixed size constraints */
+.headerTextBtn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.12s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    background: #f7f7f7;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  &:active {
+    transform: translateY(0.5px) scale(0.98);
+  }
+}
+
+.headerIcon {
+  width: 14px;
+  height: 14px;
+  color: #3f3f46; /* zinc-700 */
+}
+
+:global(.dark) .headerIconBtn {
+  background: #0a0a0a;
+  border-color: rgba(255, 255, 255, 0.08);
+  &:hover {
+    background: #111;
+  }
+}
+:global(.dark) .headerTextBtn {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.08);
+  &:hover {
+    background: #111;
+  }
+}
+:global(.dark) .headerIcon {
+  color: #e5e7eb;
+}
