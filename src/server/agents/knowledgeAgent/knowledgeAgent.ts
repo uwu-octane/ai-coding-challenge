@@ -61,6 +61,7 @@ const vectorSearchTool = tool({
 export async function knowledgeAgent(messages: ModelMessage[]) {
   const system = await getKnowledgeAgentSystem();
 
+  let stepIndex = 0;
   const result = await generateText({
     model,
     tools: {
@@ -70,12 +71,41 @@ export async function knowledgeAgent(messages: ModelMessage[]) {
     system: system,
     messages: messages,
     temperature: 0,
+    onStepFinish: (step) => {
+      const snapshot = {
+        index: stepIndex++,
+        finishReason: step.finishReason,
+        toolCalls: (step.toolCalls ?? []).map((tc) => ({
+          toolName: tc.toolName,
+          input: tc.input,
+        })),
+        text: step.text?.slice?.(0, 200),
+      };
+      console.log("[KA/onStepFinish]", JSON.stringify(snapshot, null, 2));
+    },
   });
+  const stepsDebug = (result.steps ?? []).map((s: any, i: number) => ({
+    i,
+    finishReason: s.finishReason,
+    toolCalls: (s.toolCalls ?? []).map((tc: any) => ({
+      toolName: tc.toolName,
+      input: tc.input,
+    })),
+    toolResults: (s.toolResults ?? []).map((tr: any) => ({
+      toolName: tr.toolName,
+      ok: Boolean(tr.result),
+    })),
+    text: s.text?.slice?.(0, 200),
+  }));
+  console.log("[KA/steps]", JSON.stringify(stepsDebug, null, 2));
 
   const step = result.steps[result.steps.length - 1];
   const call = step?.toolCalls?.[0];
   const res = step?.toolResults?.[0];
-
+  console.log(
+    "knowledgeAgent call:",
+    JSON.stringify(call?.input ?? {}, null, 2)
+  );
   const toolName = call?.toolName ?? "knowledge_vector_search";
 
   const output: KnowledgeAgentOutput = KnowledgeAgentOutputSchema.parse(

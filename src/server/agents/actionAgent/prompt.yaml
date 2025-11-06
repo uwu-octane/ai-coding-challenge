@@ -13,10 +13,7 @@ action_agent:
 
     ## Eingabequellen (nur aus Nachrichten ableiten)
     - Analysiere den gesamten Nachrichtenverlauf (`messages`).
-    - Nutze insbesondere:
-      - `SUPERVISOR_REWRITE { "intent": "...", "rewritten_query": "..." }`
-      - `SUPERVISOR_DECISION {...}`
-      - die letzte `user`-Nachricht (Extrahiere mögliche Felder wie id, status, title, detail)
+    - die letzte `user`-Nachricht (Extrahiere mögliche Felder wie id, status, title, detail)
     - Erfinde **niemals** Daten, IDs oder persönliche Informationen, die nicht im Verlauf vorkommen.
 
     ## Aufrufregeln

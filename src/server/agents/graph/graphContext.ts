@@ -58,7 +58,12 @@ export function pushTrace(
     .update(`${entry.node}|${entry.note}|${at}`)
     .digest("hex")
     .slice(0, 12);
-
+  if (
+    Array.isArray(_state?.trace) &&
+    _state.trace.some((e: TraceEntry) => e.id === id)
+  ) {
+    return [];
+  }
   // return the incremental array
   return [{ ...entry, at, id }];
 }

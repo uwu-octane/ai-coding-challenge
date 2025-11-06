@@ -5,6 +5,7 @@ import type { LlmMessage } from "@/conversation/history";
 import { buildGraph } from "../agents/graph/graph";
 
 const LLM_API_KEY = process.env.LLM_API_KEY || "";
+const LLM_MODEL_PROVIDER = process.env.LLM_MODEL_PROVIDER || "openai";
 const LLM_MODEL = process.env.LLM_MODEL || "deepseek-chat";
 const LLM_BASE_URL = process.env.LLM_BASE_URL;
 
@@ -15,17 +16,15 @@ if (!LLM_API_KEY) {
   throw new Error("LLM_API_KEY is not set");
 }
 let provider: any;
-if (LLM_MODEL === "deepseek-chat") {
+if (LLM_MODEL_PROVIDER === "deepseek") {
   provider = createDeepSeek({ apiKey: LLM_API_KEY, baseURL: LLM_BASE_URL });
-} else if (LLM_MODEL === "openai") {
-  provider = createOpenAI({ apiKey: LLM_API_KEY, baseURL: LLM_BASE_URL });
+} else if (LLM_MODEL_PROVIDER === "openai") {
+  provider = createOpenAI({ apiKey: LLM_API_KEY });
 } else {
-  provider = createOpenAI({ apiKey: LLM_API_KEY, baseURL: LLM_BASE_URL });
+  console.error("LLM_MODEL_PROVIDER is not supported");
+  throw new Error("LLM_MODEL_PROVIDER is not supported");
 }
-export const model =
-  LLM_MODEL === "deepseek-chat"
-    ? provider("deepseek-chat")
-    : provider("gpt-4o");
+export const model = provider(LLM_MODEL);
 
 export function buildChatCompletion(
   history: LlmMessage[],

@@ -31,21 +31,24 @@ export const SupervisorDecisionSchema = z.object({
   phase: PhaseEnum,
   route: RouteEnum,
   reason: z.string().optional(),
-  payload: z
-    .object({
-      // INTENT phase - Initial analysis and query rewrite
-      intent: IntentEnum.optional(),
-      requery_text: z.string().optional(),
-      keywords: z.array(z.string()).optional(),
+  intent: IntentEnum.optional(),
+  requery_text: z.string().optional(),
+  keywords: z.array(z.string()).optional(),
+  // payload: z
+  //   .object({
+  //     // INTENT phase - Initial analysis and query rewrite
+  //     intent: IntentEnum.optional(),
+  //     requery_text: z.string().optional(),
+  //     keywords: z.array(z.string()).optional(),
 
-      // TOOL phase - Suggested tool to call
-      suggested_tool: z.string().optional(),
+  //     // TOOL phase - Suggested tool to call
+  //     suggested_tool: z.string().optional(),
 
-      // REFLECT phase - Ask user for missing information
-      missing_fields: z.array(z.string()).optional(),
-      reflect_question: z.string().optional(),
-    })
-    .optional(),
+  //     // REFLECT phase - Ask user for missing information
+  //     missing_fields: z.array(z.string()).optional(),
+  //     reflect_question: z.string().optional(),
+  //   })
+  //   .optional(),
 });
 
 export type SupervisorDecision = z.infer<typeof SupervisorDecisionSchema>;

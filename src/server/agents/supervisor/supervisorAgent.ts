@@ -1,11 +1,5 @@
 import { tool } from "ai";
-import { z } from "zod";
-import {
-  PhaseEnum,
-  RouteEnum,
-  IntentEnum,
-  SupervisorDecisionSchema,
-} from "../shared/supervisor";
+import { SupervisorDecisionSchema } from "../shared/supervisor";
 import { SupervisorDecision } from "../shared/supervisor";
 import type { ModelMessage, ToolModelMessage } from "ai";
 import { generateText } from "ai";
@@ -19,6 +13,7 @@ type YamlRoot = {
     system?: string;
     few_shot?: string;
     guards?: string;
+    answer_prompt_system?: string;
   };
 };
 
@@ -47,29 +42,16 @@ export async function getSupervisorAgentPrompt(): Promise<string> {
   return parts.join("\n\n");
 }
 
+export async function getAnswerPromptSystem(): Promise<string> {
+  const p = await loadPrompts();
+  return p.supervisor_agent?.answer_prompt_system ?? "";
+}
+
 export const routeDecisionTool = tool({
   name: "supervisor_route_decision",
   description:
-    "Choose next route (to_knowledge | to_tool | to_reflect | to_answer | finish) and optional payload for the workflow.",
-  inputSchema: z.object({
-    phase: PhaseEnum,
-    route: RouteEnum,
-    reason: z.string().optional(),
-    payload: z.object({
-      // INTENT phase
-      intent: IntentEnum,
-      requery_text: z.string(),
-      keywords: z.array(z.string()),
-      command: z.string(),
-
-      // TOOL phase
-      suggested_tool: z.string().optional(),
-
-      // REFLECT phase
-      missing_fields: z.array(z.string()).optional(),
-      reflect_question: z.string().optional(),
-    }),
-  }),
+    "Choose next route (to_knowledge | to_tool  | to_answer | finish) and optional payload for the workflow.",
+  inputSchema: SupervisorDecisionSchema,
   execute: async (args) => args,
 });
 
@@ -93,7 +75,6 @@ export async function supervisorDecision(messages: ModelMessage[]): Promise<{
   const decision = SupervisorDecisionSchema.parse(
     step?.toolResults?.[0]?.output
   );
-
   const SupervisorDecisionMsg: ToolModelMessage = {
     role: "tool",
     content: [

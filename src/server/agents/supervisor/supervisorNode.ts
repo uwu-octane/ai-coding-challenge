@@ -2,7 +2,8 @@ import { Command } from "@langchain/langgraph";
 import { GraphState } from "../graph/graphContext";
 import { SupervisorDecisionSchema } from "../shared/supervisor";
 import { pushTrace } from "../shared/graph";
-import { supervisorDecision } from "./supervisorAgent";
+import { supervisorDecision, getAnswerPromptSystem } from "./supervisorAgent";
+import type { ModelMessage } from "ai";
 
 // Map route values to actual node names in the graph
 function routeToNodeName(route: string): string {
@@ -49,10 +50,16 @@ export async function supervisorNode(state: typeof GraphState.State) {
 export async function supervisorAnswerNode(
   state: typeof GraphState.State
 ): Promise<Command> {
-  // This is the final answer node - it directly returns messages without additional processing
-  // The answer is already in the messages from previous agents (knowledge/action)
+  // Add answer prompt system message to guide final answer generation
+  const answerSystemPrompt = await getAnswerPromptSystem();
+  const systemMessage: ModelMessage = {
+    role: "system",
+    content: answerSystemPrompt,
+  };
+
   return new Command({
     update: {
+      messages: [...state.messages, systemMessage],
       trace: pushTrace(state, {
         node: "answer",
         note: "final answer ready",
